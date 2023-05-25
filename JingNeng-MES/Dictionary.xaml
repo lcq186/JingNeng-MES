@@ -1,0 +1,44 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModel="clr-namespace:JingNeng_MES.ViewModel"
+    mc:Ignorable="d">
+
+    <DataTemplate x:Key="DataTemplateLabel">
+
+  
+        
+
+            <Border
+                Width="50"
+                Height="50"
+                Margin="2,2,0,2"
+                BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
+                BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock
+                        Grid.Row="0"
+                        HorizontalAlignment="Left"
+                        Text="{Binding Path=(viewModel:BinContInfo.BinNo)}" />
+                    <TextBlock
+                        Grid.Row="1"
+                        HorizontalAlignment="Right"
+                        Text="{Binding Path=(viewModel:BinContInfo.BinCount)}" />
+
+
+                </Grid>
+            </Border>
+       
+
+
+     
+
+    </DataTemplate>
+</ResourceDictionary>
