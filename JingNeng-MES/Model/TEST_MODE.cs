@@ -1,5 +1,8 @@
-﻿namespace JingNeng_MES.Model
+﻿using System;
+
+namespace JingNeng_MES.Model
 {
+    [Flags]
     public enum TEST_MODE
     {
         None = 0,
@@ -15,6 +18,6 @@
         ///（基准测试）
         /// </summary>
         BenchmarkTest,
-
+        
     }
 }

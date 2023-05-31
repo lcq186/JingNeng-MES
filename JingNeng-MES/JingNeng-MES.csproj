@@ -84,6 +84,8 @@
     <Compile Include="Model\TesterCommand.cs" />
     <Compile Include="Model\TEST_MODE.cs" />
     <Compile Include="Service\JingNengServer.cs" />
+    <Compile Include="Service\MesEventArgs.cs" />
+    <Compile Include="Tester\MesHelper.cs" />
     <Compile Include="ViewModel\BinContInfo.cs" />
     <Compile Include="ViewModel\Command\AsyncCommand.cs" />
     <Compile Include="ViewModel\Command\AsyncCommandBase.cs" />

@@ -24,7 +24,7 @@ namespace JingNeng_MES
         #region Debug，调试
         public void Debug(string msg, [CallerMemberName] String propertyName = "")
         {
-            _logger.Debug(msg + propertyName);
+            _logger.Debug( propertyName + "->"+ msg );
         }
 
         public void Debug(string msg, Exception err)

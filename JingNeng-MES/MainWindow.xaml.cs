@@ -31,7 +31,7 @@ namespace JingNeng_MES
 
         public MainWindow()
         {
-            this.DataContext = new MainViewModel();
+          
 
             InitializeComponent();
            
@@ -65,6 +65,7 @@ namespace JingNeng_MES
                 LogManager.ReconfigExistingLoggers();
 
             });
+            this.DataContext = new MainViewModel();
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)

@@ -5,9 +5,14 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using Microsoft.Xaml.Behaviors.Core;
+ 
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
 using System.Threading.Tasks;
+using System.Windows.Markup;
+using System.Net;
+using System.Net.Sockets;
 
 namespace JingNeng_MES.ViewModel
 {
@@ -23,7 +28,14 @@ namespace JingNeng_MES.ViewModel
         {
 
             _server = new JingNengServer();
-            _server.Bind("127.0.0.1", 8848);
+         
+
+            string Port = ConfigurationManager.AppSettings["Port"] ?? "8848";
+
+            var host = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(a=>a.AddressFamily== AddressFamily.InterNetwork).ToString();
+            string ServerIP = ConfigurationManager.AppSettings["ServerIP"] ?? host;
+            var xx = Dns.GetHostEntry(Dns.GetHostName()).AddressList;
+            _server.Bind(ServerIP,  int.Parse(Port));
             _server.Listen(10);
             _server.StartAsync();
             _server.OnRequestHandle += _server_OnRequestHandle;
@@ -44,6 +56,11 @@ namespace JingNeng_MES.ViewModel
 
         public ICommand CountSynchronization => OnCountSynchronizationCommand();
         public ICommand StartWork => OnStartWorkCommand();
+
+        public int BinNo { get; set; }
+        public bool IsSingleBin { get; set; }
+        public bool BinClear { get; set; }
+
 
         public TEST_MODE TestMode
         {
@@ -74,22 +91,22 @@ namespace JingNeng_MES.ViewModel
                     break;
 
                 case TesterCommand.STANDARD_DATA:
-                    LoggerHelper._.Info(e.StringData);
+
                     break;
 
                 case TesterCommand.LOT_START:
-                    LoggerHelper._.Info(e.StringData);
+
                     break;
 
                 case TesterCommand.LOT_END:
-                    LoggerHelper._.Info(e.StringData);
+
                     break;
             }
         }
 
         private ICommand OnCountSynchronizationCommand()
         {
-            return new ActionCommand(() =>
+            return new RelayCommand(() =>
             {
                 try
                 {
@@ -105,26 +122,93 @@ namespace JingNeng_MES.ViewModel
 
             });
         }
-        private   ICommand OnStartWorkCommand()
+        private ICommand OnStartWorkCommand()
         {
             return new AsyncCommand(async () =>
             {
                 await Task.Run(() =>
                 {
-                    var x = "STANDARD_DATA;" +
-                            "PPID=50102.TCOB;" +
-                            "FOLDER=D:\\NEW_PROG\\50102.TCOB\\50102.TCOB;" +
-                            "VF1=2,3.205,3.24,3.18,3.23,3.168,3.178,3.187,3.188,3.19,3.245;" +
-                            "KY1=1,380.3,385,388,381.1,385.8,380.3,380.3,377.2,374.1,389.4;" +
-                            "LMX1=2,0.3227,0.3212,0.3238,0.3211,0.3235,0.3208,0.3215,0.3192,0.3227,0.3228";
+                    var x = $"LOT_START;TEST_MODE={(int)TestMode}";
+
+
+                    switch (TestMode)
+                    {
+                        case TEST_MODE.None:
+                            break;
+                        case TEST_MODE.NormalRun:
+
+
+                            break;
+                        case TEST_MODE.MasterTest:
+                            x = "STANDARD_DATA;" +
+                                      "PPID=50102.TCOB;" +
+                                      "FOLDER=D:\\eTester\\Program\\JNENG.PRG;" +
+                                      "VF1=2,3.205,3.24,3.18,3.23,3.168,3.178,3.187,3.188,3.19,3.245;" +
+                                      "KY1=1,380.3,385,388,381.1,385.8,380.3,380.3,377.2,374.1,389.4;" +
+                                      "LMX1=2,0.3227,0.3212,0.3238,0.3211,0.3235,0.3208,0.3215,0.3192,0.3227,0.3228";
+                            _server.Send(x);
+                            //x = "LOT_START;" +
+                            //    "PPID=50102.TCOB;" +
+                            //    "FOLDER=D:\\eTester\\Program\\JNENG.PRG;" +
+                            //    "LOTID=G-230510001-006;" +
+                            //    "OPERATORID=EGZ100888;" +
+                            //    "SAVE_PATH=" +
+                            //    "D:\\DATA\\FGJZ\\G-230510001\\CTS007_FGJZ_G-230510001-006_236D5EE8;" +
+                            //    "TEST_MODE=2;" +
+                            //    "INTERFACE=OFF;" +
+                            //    "TEST_TOTALNUMBER_CLEAR=ON;";
+                            //_server.Send(x);
+
+                            break;
+                        case TEST_MODE.BenchmarkTest:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
+                    x = $"LOT_START;" +
+                        "PPID=50102.TCOB;" +
+                        "FOLDER=D:\\eTester\\Program\\JNENG.PRG;" +
+                        "LOTID=G-230510001-006;" +
+                        "OPERATORID=EGZ100888;" +
+                        "SAVE_PATH=" +
+                        "D:\\DATA\\FGJZ\\G-230510001\\CTS007_FGJZ_G-230510001-006_236D5EE8;" +
+                        $"TEST_MODE={(int)TestMode};" +
+                        $"INTERFACE={(IsSingleBin? "ON" :"OFF")};" +
+                        $"BIN_OUT_SET={BinNo};" +
+                        $"TEST_TOTALNUMBER_CLEAR={(BinClear ? "ON" : "OFF")};;";
                     _server.Send(x);
-                    
+
+
+
+
+
+
+
                 });
 
 
             });
         }
 
+  
 
+        public ICommand EndWork => new RelayCommand(PerformEndWork);
+
+        private void PerformEndWork()
+        {
+            _server.Send("LOT_END");
+        }
+
+
+
+
+      
+
+        public ICommand ResetWork => new RelayCommand(PerformResetWork);
+
+        private void PerformResetWork()
+        {
+        }
     }
 }

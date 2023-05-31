@@ -9,31 +9,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-using JingNeng_MES.Model;
-
 using static JingNeng_MES.Model.CommunicationModel;
 
 namespace JingNeng_MES.Service
 {
-
-
-
-    public class MesEventArgs : EventArgs
-    {
-        public MesEventArgs(IntPtr handle, string receiveStr)
-        {
-
-            this.StringData = receiveStr;
-            Handle = handle;
-            TesterCommand = receiveStr.ToCmd();
-        }
-
-        public IntPtr Handle { get; }
-        public TesterCommand TesterCommand { get; set; }
-        public string StringData { get; set; }
-
-    }
-
     internal class JingNengServer
     {
         private int _bufferIndex;
@@ -41,13 +20,13 @@ namespace JingNeng_MES.Service
         private byte[] _receiveBuffer = null;
         private Socket _socket = null;
         public event EventHandler<MesEventArgs> OnRequestHandle;
-        public Dictionary<IntPtr, Socket> _clientSocket;
+        public Dictionary<IntPtr, Socket> _DictionarycSockets;
         public JingNengServer()
         {
             _jingNengServer = this;
             _receiveBuffer = new byte[1024];
-            _bufferIndex = 0;
-            _clientSocket = new Dictionary<IntPtr, Socket>();
+            _bufferIndex = 1024;
+            _DictionarycSockets = new Dictionary<IntPtr, Socket>();
         }
 
         ///// <summary>
@@ -68,6 +47,7 @@ namespace JingNeng_MES.Service
             IPAddress iPAddress = IPAddress.Parse(ip);
             IPEndPoint iPEndPoint = new IPEndPoint(iPAddress, port);
 
+            LoggerHelper._.Debug(iPEndPoint.ToString());
             _socket.Bind(iPEndPoint);
 
             return _jingNengServer;
@@ -83,6 +63,7 @@ namespace JingNeng_MES.Service
         }
         public void Send(string str)
         {
+            LoggerHelper._.Debug(str);
             byte[] buffBytes = Encoding.UTF8.GetBytes(str);
 
             Send(buffBytes);
@@ -91,22 +72,33 @@ namespace JingNeng_MES.Service
 
         public void Send(byte[] buffer)
         {
-            var _dir = _clientSocket.FirstOrDefault();
+            var _dir = _DictionarycSockets.LastOrDefault();
             Send(_dir.Key, buffer);
 
         }
         public void Send(IntPtr handle, byte[] buffer)
         {
-            if (_clientSocket.TryGetValue(handle, out var _client))
+            try
             {
-                _client.Send(buffer);
+
+
+                if (_DictionarycSockets.TryGetValue(handle, out var _client))
+                {
+
+                    _client.Send(buffer);
+                }
+                else
+                {
+                    LoggerHelper._.Warn(handle + "丢失");
+
+                }
             }
-            else
+            catch (Exception z)
             {
-                LoggerHelper._.Warn(handle + "丢失");
+                _DictionarycSockets.Remove((handle));
+                LoggerHelper._.Error(handle + "丢失", z);
 
             }
-
 
         }
 
@@ -129,10 +121,10 @@ namespace JingNeng_MES.Service
             string helloStr = $"{clientSocket.LocalEndPoint}";
             byte[] helloByte = Encoding.UTF8.GetBytes(helloStr);
 
-            Console.WriteLine($"{helloStr}:{clientSocket.Handle}");
-            clientSocket.Send(helloByte);
-
-            _clientSocket.Add(clientSocket.Handle, clientSocket);
+            LoggerHelper._.Info($"{helloStr}:{clientSocket.Handle}");
+            //  clientSocket.Send(helloByte);
+            _DictionarycSockets.Remove(clientSocket.Handle);
+            _DictionarycSockets.Add(clientSocket.Handle, clientSocket);
 
             clientSocket.BeginReceive(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, AsyncReceiveCallback, clientSocket);
 
@@ -154,13 +146,13 @@ namespace JingNeng_MES.Service
                 {
                     //接收不到数据，说明客户端已经关闭，那在服务端这里要关闭 Socket
                     // clientSocket.Close();
-                    Console.WriteLine("客户端已经关闭");
 
-                    return;
+                    LoggerHelper._.Warn("客户端已经关闭");
+                    //return;
                 }
                 else
                 {
-                    _bufferIndex = count;
+                    //_bufferIndex = count;
                     ReadReceiveData(clientSocket.Handle);
                     _receiveBuffer = new byte[_bufferIndex];
                     clientSocket.BeginReceive(_receiveBuffer,
@@ -173,13 +165,13 @@ namespace JingNeng_MES.Service
             }
             catch (Exception e)
             {
-               
+
                 if (clientSocket != null)
                 {
-                   clientSocket.Close();
-                   Console.WriteLine("客户端已经关闭");
+                    clientSocket.Close();
+                    Console.WriteLine("客户端已经关闭");
                 }
-                LoggerHelper._.Error(null,e);
+                LoggerHelper._.Error(null, e);
             }
             finally
             {
