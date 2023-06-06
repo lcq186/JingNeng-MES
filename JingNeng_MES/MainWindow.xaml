@@ -12,13 +12,15 @@
     Title="MES-分光-测试机-模拟器"
     Width="800"
     Height="600"
-   d:DataContext="{d:DesignInstance viewModel:MainViewModel,
+    d:DataContext="{d:DesignInstance viewModel:MainViewModel,
                                      IsDesignTimeCreatable=False}"
     mc:Ignorable="d">
 
 
     <Window.Resources>
-        <converter:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+       
+            <converter:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        
     </Window.Resources>
 
     <Grid>
@@ -99,7 +101,7 @@
                             <RadioButton
                                 Margin="2,2,2,2"
                                 Content="校正"
-                                IsChecked="{Binding Path= TestMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static local:TEST_MODE.MasterTest}}" />
+                                IsChecked="{Binding Path=TestMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static local:TEST_MODE.MasterTest}}" />
 
                             <RadioButton
                                 Margin="2,2,2,2"
@@ -254,12 +256,14 @@
                             Grid.Row="2"
                             Grid.Column="1"
                             HorizontalAlignment="Left"
-                            VerticalAlignment="Center" Text="-"  ></TextBlock>
+                            VerticalAlignment="Center"
+                            Text="-" />
                         <TextBlock
                             Grid.Row="0"
                             Grid.Column="1"
                             HorizontalAlignment="Left"
-                            VerticalAlignment="Center" Text="-"  ></TextBlock>
+                            VerticalAlignment="Center"
+                            Text="-" />
                         <TextBlock
                             Grid.Row="1"
                             Grid.Column="2"
@@ -299,7 +303,6 @@
 
                 <ItemsControl
                     Height="Auto"
-                   
                     ItemTemplate="{StaticResource DataTemplateLabel}"
                     ItemsSource="{Binding BinContInfo}"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"

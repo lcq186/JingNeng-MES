@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33717.318
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JingNeng-MES", "JingNeng-MES\JingNeng-MES.csproj", "{D563DEDF-872A-4443-9130-10DA220C82C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JingNeng_MES", "JingNeng_MES\JingNeng_MES.csproj", "{0D3B4CF2-8889-4F1C-9E74-D903C122FF50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D563DEDF-872A-4443-9130-10DA220C82C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D563DEDF-872A-4443-9130-10DA220C82C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D563DEDF-872A-4443-9130-10DA220C82C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D563DEDF-872A-4443-9130-10DA220C82C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D3B4CF2-8889-4F1C-9E74-D903C122FF50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D3B4CF2-8889-4F1C-9E74-D903C122FF50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D3B4CF2-8889-4F1C-9E74-D903C122FF50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D3B4CF2-8889-4F1C-9E74-D903C122FF50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {442C69A9-93C3-4D7E-AE46-5B130603EDDB}
+		SolutionGuid = {10A9CDF2-C07D-4FEB-9F5A-2C78DA2A67DB}
 	EndGlobalSection
 EndGlobal
